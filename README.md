@@ -1,21 +1,15 @@
 # Suyziss Pet
 
-A small virtual pet for Termux, written in Python. Your pet's progress is stored locally and can be backed up to GitHub, then restored on another Android device.
+A customizable offline virtual pet for Termux, written in Python. Your progress is saved locally on your device.
 
 ## Features
 
-- Feed, play with, rest, and care for your pet.
-- Hunger, energy, happiness, level, XP, coins, and inventory.
-- State persists locally in `data/pet.json`.
-- GitHub cloud backup and restore.
-- Cloud save is encrypted locally with a passphrase before upload. The public repository only receives ciphertext.
-- Conflict checks help prevent accidental overwrites between devices.
-
-## Requirements
-
-- Termux (install from F-Droid or the official Termux GitHub releases).
-- Python 3.10+.
-- A GitHub account and a fine-grained personal access token with **Contents: Read and write** permission for this repository.
+- Russian and English interface (Russian is the default).
+- Customize your pet's name and choose a cat, dog, or rabbit.
+- Toggle colored terminal interface.
+- Feed, play, rest, and pet your companion.
+- Hunger, energy, happiness, level, XP, coins, and snacks.
+- Local save in `data/pet.json`; no internet connection or extra Python packages are required.
 
 ## Install on Termux
 
@@ -24,69 +18,40 @@ pkg update
 pkg install python git
 git clone https://github.com/suyziss/suyziss-pet.git
 cd suyziss-pet
-python -m pip install -r requirements.txt
 python pet.py
 ```
 
-## Set up GitHub sync
+## Settings
 
-1. On GitHub, create a fine-grained personal access token. Restrict it to this repository and grant **Contents: Read and write**. Do not share the token.
-2. Run:
+Open **Settings** in the game menu to:
+1. Change your pet's name.
+2. Choose its type: cat, dog, or rabbit.
+3. Switch between Russian and English.
+4. Enable or disable terminal colors.
 
-```bash
-python sync.py setup
-```
+Settings and game progress are stored in `data/pet.json`.
 
-3. Enter the token when prompted. It is stored in your Termux home config directory with owner-only permissions.
-4. Choose a strong backup passphrase when prompted by the first push or pull. **The passphrase is not uploaded or stored by this app. Keep it safe.**
+## Backup your progress manually
 
-Back up your pet:
-
-```bash
-python sync.py push
-```
-
-Restore on another device:
+Cloud synchronization is currently disabled. To keep a backup, copy the local save file:
 
 ```bash
-pkg update
-pkg install python git
-git clone https://github.com/suyziss/suyziss-pet.git
-cd suyziss-pet
-python -m pip install -r requirements.txt
-python sync.py setup
-python sync.py pull
-python pet.py
+cp data/pet.json data/pet-backup.json
 ```
 
-Use the same GitHub token permissions and the same backup passphrase on each device. The restore command asks before replacing an existing local save.
+To restore it, copy the backup over the save file:
 
-## Commands
+```bash
+cp data/pet-backup.json data/pet.json
+```
 
-Start the pet with `python pet.py`. In the menu you can feed, play, rest, inspect stats, and save.
-
-Cloud commands:
-
-- `python sync.py setup` — securely save your GitHub token locally.
-- `python sync.py push` — encrypt and upload the local save.
-- `python sync.py pull` — download, decrypt, and restore the cloud save.
-- `python sync.py status` — check whether a cloud save exists.
-
-## Important backup notes
-
-- This is a backup/restore workflow, not automatic real-time synchronization. Before switching devices, push on the old device and pull on the new one.
-- Do not push from two devices with diverging progress. Pull the latest save first. The tool refuses to overwrite a cloud version it has not previously seen.
-- If you lose the passphrase, the encrypted backup cannot be recovered.
-- The repository is public. The encrypted save is safe to publish only while your passphrase remains private and strong. Never upload your GitHub token, passphrase, or an unencrypted save.
-- GitHub is a third-party service; keep an additional offline backup if the pet's progress is important.
+Keep backup files private if they contain personal customizations.
 
 ## Project layout
 
 ```
-pet.py                 Virtual pet game
-sync.py                GitHub encrypted backup/restore
-requirements.txt       Python dependencies
-data/                  Local save (created automatically; git-ignored)
+pet.py                 Offline virtual pet game
+data/pet.json          Local save (created automatically)
 ```
 
 Made by [@suyziss](https://github.com/suyziss).
